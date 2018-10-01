@@ -1,10 +1,13 @@
 import React, { Component } from "react";
 import MainScreen from "./screen/MainScreen";
 import MapScreen from "./screen/MapScreen";
+import { Route, Switch } from "react-router-dom";
 import openSocket from "socket.io-client";
 import NavigationBar from "./components/NavigationBar";
+import { COLLECT_DATA_LINK, GRAPH_VIEW_DATA_LINK } from "./routes/Routes";
 
 import { MAX_SENSOR_DATA_ARRAY, CONNECTION_URL } from "./constants";
+import CollectDataScreen from "./screen/CollectDataScreen";
 
 const socket = openSocket(CONNECTION_URL);
 
@@ -63,12 +66,35 @@ class App extends Component {
   render() {
     return (
       <div>
-        <NavigationBar />
-        <MainScreen
-          location={this.state.locationData.location}
-          data={this.state.graphData}
-        />
-        {/* <MapScreen data={this.state.locationData.location} /> */}
+        <div style={{ marginTop: "60px" }}>
+          <Switch>
+            <Route
+              exact
+              path={COLLECT_DATA_LINK}
+              component={() => (
+                <CollectDataScreen
+                  location={this.state.locationData.location}
+                  data={this.state.graphData}
+                />
+              )}
+            />
+            <Route
+              path={GRAPH_VIEW_DATA_LINK}
+              component={() => (
+                <MainScreen
+                  location={this.state.locationData.location}
+                  data={this.state.graphData}
+                />
+              )}
+            />
+          </Switch>
+          {/* <MainScreen
+              location={this.state.locationData.location}
+              data={this.state.graphData}
+            /> */}
+          {/* <MapScreen data={this.state.locationData.location} /> */}
+          <Route path="" component={NavigationBar} />
+        </div>
       </div>
     );
   }

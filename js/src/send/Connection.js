@@ -23,10 +23,23 @@ class Connection{
       })
 
       client.on("UPLOAD_PIC", (data)=>{
+
         Connection.sendDataToClient({
           type: "CAMERA_DATA_TO_FRONTEND",
           payload: data
         })
+      })
+
+      client.on("START_COLLECTING_DATA",() => {
+
+      })
+
+      client.on("STOP_COLLECTING_DATA", ()=>{
+
+      })
+
+      client.on("SAVE_COLLECTED_DATA",()=>{
+
       })
 
       client.on("disconnect", ()=> {

@@ -4,7 +4,7 @@ import imageDataBase64DB from "./schemas/ImageDataSchema";
 
 const databaseConnection = "127.0.0.1:27017/pollution_database";
 
-class DatabseConnection{
+class DatabaseConnection{
   static initDatabase = () => {
     mongoose.connect(databaseConnection);
     console.log("Loacal Databse Connected");
@@ -22,8 +22,10 @@ class DatabseConnection{
           let date = new Date();
           let dateString = date.toLocaleTimeString();
           console.log(dateString+ ": sensor data saved");
+          return true;
         }).catch(err => {
           console.log(err);
+          return false;
         })
         break;
 
@@ -35,13 +37,15 @@ class DatabseConnection{
 
         imageData.save().then(()=>{
           console.log(dateString+ ": image data saved");
+          return true;
         }).catch(err => {
           console.log(err);
+          return false;
         })
         break;
     }
   }
 }
 
-export default DatabseConnection;
+export default DatabaseConnection;
 

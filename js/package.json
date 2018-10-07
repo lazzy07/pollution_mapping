@@ -9,7 +9,8 @@
     "recharts": "^1.2.0",
     "serialport": "^6.0.4",
     "socket-io": "^1.0.0",
-    "socket.io": "^2.1.1"
+    "socket.io": "^2.1.1",
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",

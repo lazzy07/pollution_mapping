@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import MainScreen from "./screen/MainScreen";
-import MapScreen from "./screen/MapScreen";
 import { Route, Switch } from "react-router-dom";
 import openSocket from "socket.io-client";
 import NavigationBar from "./components/NavigationBar";
@@ -22,9 +21,38 @@ class App extends Component {
           longitude: 80.6356,
           latitude: 7.2955
         }
-      }
+      },
+      collectdata: {
+        smoke: false,
+        sound: false,
+        soil: false
+      },
+      time: 0,
+      timer: false,
+      collecting: false,
+      buttonText: "Collect",
+
+      picArray: []
     };
   }
+
+  setDataCollector = collect => {
+    this.setState({
+      collectData: {
+        ...this.state.collectdata,
+        [collect]: true
+      }
+    });
+  };
+
+  unsetCollector = collect => {
+    this.setState({
+      collectData: {
+        ...this.state.collectdata,
+        [collect]: false
+      }
+    });
+  };
 
   sendDataToGraphData = data => {
     const graphData = this.state.graphData;
@@ -45,11 +73,39 @@ class App extends Component {
     });
   };
 
+  collectData = () => {
+    if (this.state.collecting) {
+      this.setState({
+        timer: true,
+        time: 0,
+        collecting: false,
+        buttonText: "Collecting..."
+      });
+    } else {
+      this.setState({
+        collecting: true,
+        time: 0,
+        timer: false,
+        buttonText: "Collect"
+      });
+    }
+  };
+
+  setTime = time => {
+    this.setState({
+      time
+    });
+  };
+
   setLocationdata = data => {
     this.setState({
       locationData: data
     });
   };
+
+  componentWillMount() {
+    socket.emit("ADD_MONITOR");
+  }
 
   componentDidMount = () => {
     socket.on("SENSOR_DATA", data => {
@@ -59,6 +115,14 @@ class App extends Component {
     socket.on("LOCATION_DATA", data => {
       if (data.latitude !== null) {
         this.setLocationdata(data);
+      }
+    });
+
+    socket.on("CAMERA_DATA_TO_FRONTEND", data => {
+      if (data) {
+        this.setState({
+          picArray: [...this.state.picArray, data]
+        });
       }
     });
   };
@@ -75,6 +139,15 @@ class App extends Component {
                 <CollectDataScreen
                   location={this.state.locationData.location}
                   data={this.state.graphData}
+                  time={this.state.time}
+                  setTime={this.setTime}
+                  startTimer={this.state.timer}
+                  collectData={this.collectData}
+                  buttonText={this.state.buttonText}
+                  collectDataCheck={this.state.collectdata}
+                  setDataCollector={this.setDataCollector}
+                  unsetCollector={this.unsetCollector}
+                  imageArr={this.state.picArray}
                 />
               )}
             />

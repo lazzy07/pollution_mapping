@@ -4,11 +4,16 @@ export class Checkbox extends Component {
   render() {
     return (
       <div>
-        <p>
-          <input style={{ backgroundColor: "#252525" }} type="checkbox" />
-          &nbsp;&nbsp;
+        <label className="container">
+          <input
+            type="checkbox"
+            checked={this.props.checked}
+            onClick={this.props.onClick}
+            onChange={() => {}}
+          />
           {this.props.label}
-        </p>
+          <span className="checkmark" />
+        </label>
       </div>
     );
   }

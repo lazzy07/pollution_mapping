@@ -15,8 +15,6 @@ let style = {
   }
 };
 
-let styles = style.norm;
-
 export class Button extends React.Component {
   constructor(props) {
     super(props);
@@ -34,12 +32,17 @@ export class Button extends React.Component {
     this.setState({ styles: style.norm });
   };
 
+  onClick = () => {
+    this.props.onClick();
+  };
+
   render() {
     return (
       <div
         className="hovarable"
         onMouseEnter={() => this.mouseEnter()}
         onMouseLeave={() => this.mouseLeave()}
+        onClick={this.onClick}
       >
         <p
           style={{

@@ -3,6 +3,7 @@
 # dependencies
 frontend/node_modules
 js/node_modules
+take_pics/node_modules
 
 # testing
 frontend/coverage

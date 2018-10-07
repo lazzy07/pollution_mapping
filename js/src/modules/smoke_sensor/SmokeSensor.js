@@ -35,11 +35,11 @@ class SmokeSensor{
     this.R1 = 7700;
   }
 
-  initSensorAnalog(){
+  initSensorAnalog=()=>{
     this.board.pinMode(this.pin, five.Pin.ANALOG);
   }
 
-  setSensorReadingAnalog(){
+  setSensorReadingAnalog=()=>{
     this.board.analogRead(this.pin, val=> {
       this.val = val;
     })

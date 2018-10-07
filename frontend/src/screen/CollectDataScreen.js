@@ -1,11 +1,29 @@
 import React, { Component } from "react";
-import PositionMap from "../components/PositionMap";
+//import PositionMap from "../components/PositionMap";
 import { Button } from "../components/Button";
-import Stopwatch from "react-stopwatch";
 import { Timer } from "../components/Timer";
 import { Checkbox } from "../components/Checkbox";
 
 export default class CollectDataScreen extends Component {
+  changeCollectState = collect => {
+    if (this.props.collectDataCheck[collect]) {
+      this.props.unsetCollector(collect);
+    } else {
+      this.props.setDataCollector(collect);
+    }
+  };
+
+  setImageData = () => {
+    if (this.props.imageArr.length > 0) {
+      return (
+        <img
+          alt=""
+          src={"data:image/jpeg;base64," + this.props.imageArr[0].base64}
+        />
+      );
+    }
+  };
+
   render() {
     return (
       <div style={{ color: "#00fcdb" }}>
@@ -26,11 +44,11 @@ export default class CollectDataScreen extends Component {
             <h4 style={{ textShadow: "2px 2px 5px rgba(0, 252, 219, 0.4)" }}>
               GPS Data
             </h4>
-            <p>
+            {/* <p>
               Latitude : {this.props.location.latitude}
               <br />
               Longitude: {this.props.location.longitude}
-            </p>
+            </p> */}
           </div>
           <div
             style={{
@@ -85,6 +103,7 @@ export default class CollectDataScreen extends Component {
             <p>Mic: {this.props.data.mic}</p>
           </div>
         </div>
+        <div>{this.setImageData()}</div>
         <div className="row">
           <div
             className="col-12 col-md-6"
@@ -110,7 +129,6 @@ export default class CollectDataScreen extends Component {
             </div>
           </div>
           <div style={{ padding: "20px" }} className="col-12 col-md-4">
-            <Timer start />
             <div
               style={{
                 boxShadow:
@@ -120,10 +138,30 @@ export default class CollectDataScreen extends Component {
               }}
             >
               <p>Collect Data : </p>
-              <Checkbox label="Smoke Data" />
-              <Checkbox label="Sound Level Data" />
-              <Checkbox label="Soil Moisture Data" />
-              <Button text="Collect" />
+              <Checkbox
+                checked={this.props.collectDataCheck.smoke}
+                onClick={() => this.changeCollectState("smoke")}
+                label="Smoke Data"
+              />
+              <Checkbox
+                checked={this.props.collectDataCheck.sound}
+                onClick={() => this.changeCollectState("sound")}
+                label="Sound Level Data"
+              />
+              <Checkbox
+                checked={this.props.collectDataCheck.soil}
+                onClick={() => this.changeCollectState("soil")}
+                label="Soil Moisture Data"
+              />
+              <Timer
+                time={this.props.time}
+                setTime={this.props.setTime}
+                start={this.props.startTimer}
+              />
+              <Button
+                onClick={this.props.collectData}
+                text={this.props.buttonText}
+              />
             </div>
           </div>
         </div>

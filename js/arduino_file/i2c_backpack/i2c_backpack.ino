@@ -13,6 +13,7 @@
 //#define DHTTYPE DHT22
 //#define DHTTYPE DHT21
 
+
 // I2C Defaults
 #define I2C_DEFAULT_ADDRESS 0x0A
 #define I2C_BUFFER_SIZE 4
@@ -24,37 +25,33 @@
 //
 byte buffer[I2C_BUFFER_SIZE];
 
-int addressPins[] = {AD0, AD1};
+int addressPins[] = { AD0, AD1 };
 int address = I2C_DEFAULT_ADDRESS;
 int pin = 2;
 
-void resetState()
-{
+void resetState() {
   digitalWrite(pin, LOW);
   pinMode(pin, INPUT);
 }
 
 DHT dht(DHTPIN, DHTTYPE);
 
-void setup()
-{
+void setup() {
 
   int offset = 0;
 
-  for (int i = 0; i < 2; i++)
-  {
+  for (int i = 0; i < 2; i++) {
     pinMode(addressPins[i], INPUT);
-    if (digitalRead(addressPins[i]))
-    {
+    if (digitalRead(addressPins[i])) {
       offset |= 1 << i;
     }
   }
 
   address += offset;
 
-#if DEBUG_MODE
-  Serial.begin(9600);
-#endif
+  #if DEBUG_MODE
+    Serial.begin(9600);
+  #endif
 
   resetState();
 
@@ -64,8 +61,7 @@ void setup()
   Wire.onRequest(onRequest);
 }
 
-void loop()
-{
+void loop() {
 
   int h = (int)((float)dht.readHumidity() * 100);
   int c = (int)((float)dht.readTemperature() * 100);
@@ -78,7 +74,6 @@ void loop()
   delay(250);
 }
 
-void onRequest()
-{
+void onRequest() {
   Wire.write(buffer, I2C_BUFFER_SIZE);
 }

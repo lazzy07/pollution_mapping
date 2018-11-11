@@ -1,107 +1,38 @@
 import React, { Component } from "react";
 import MainScreen from "./screen/MainScreen";
-import { Route, Switch } from "react-router-dom";
+import { Route, Switch, withRouter } from "react-router-dom";
+import { connect } from "react-redux";
 import openSocket from "socket.io-client";
 import NavigationBar from "./components/NavigationBar";
 import { COLLECT_DATA_LINK, GRAPH_VIEW_DATA_LINK } from "./routes/Routes";
 
-import { MAX_SENSOR_DATA_ARRAY, CONNECTION_URL } from "./constants";
+import {
+  setGpsData,
+  setMicData,
+  setHumidityData,
+  setMq2Data,
+  setMq135Data,
+  setSoilData
+} from "./redux/actions/RecieveDataActions";
+
+import { CONNECTION_URL } from "./constants";
 import CollectDataScreen from "./screen/CollectDataScreen";
+import {
+  setGraphDataMic,
+  setGraphDataMq2,
+  setGraphDataMq135,
+  setGraphDataSoil
+} from "./redux/actions/GraphDataActions";
 
 const socket = openSocket(CONNECTION_URL);
 
 class App extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
-      graphData: [],
-      locationData: {
-        location: {
-          longitude: 80.6356,
-          latitude: 7.2955
-        }
-      },
-      collectdata: {
-        smoke: false,
-        sound: false,
-        soil: false
-      },
-      time: 0,
-      timer: false,
-      collecting: false,
-      buttonText: "Collect",
-
-      picArray: []
+      imageArr: []
     };
   }
-
-  setDataCollector = collect => {
-    this.setState({
-      collectData: {
-        ...this.state.collectdata,
-        [collect]: true
-      }
-    });
-  };
-
-  unsetCollector = collect => {
-    this.setState({
-      collectData: {
-        ...this.state.collectdata,
-        [collect]: false
-      }
-    });
-  };
-
-  sendDataToGraphData = data => {
-    const graphData = this.state.graphData;
-
-    let date = new Date(data.time);
-
-    data.timeString = date.toISOString().substr(11, 8);
-
-    if (graphData.length > MAX_SENSOR_DATA_ARRAY) {
-      graphData.splice(0, 1);
-      graphData.push(data);
-    } else {
-      graphData.push(data);
-    }
-
-    this.setState({
-      graphData
-    });
-  };
-
-  collectData = () => {
-    if (this.state.collecting) {
-      this.setState({
-        timer: true,
-        time: 0,
-        collecting: false,
-        buttonText: "Collecting..."
-      });
-    } else {
-      this.setState({
-        collecting: true,
-        time: 0,
-        timer: false,
-        buttonText: "Collect"
-      });
-    }
-  };
-
-  setTime = time => {
-    this.setState({
-      time
-    });
-  };
-
-  setLocationdata = data => {
-    this.setState({
-      locationData: data
-    });
-  };
 
   componentWillMount() {
     socket.emit("ADD_MONITOR");
@@ -109,21 +40,44 @@ class App extends Component {
 
   componentDidMount = () => {
     socket.on("SENSOR_DATA", data => {
-      this.sendDataToGraphData(data);
+      if (data.mq2) {
+        this.props.setMq2(data.mq2);
+        this.props.graphMq2(data.mq2);
+      }
+      if (data.mq135) {
+        this.props.setMq135(data.mq135);
+        this.props.graphMq135(data.mq135);
+      }
+      if (data.mic) {
+        this.props.setMic(data.mic);
+        this.props.graphMic(data.mic);
+      }
+      if (data.dht11) {
+        this.props.setHumidity(data.dht11);
+      }
     });
 
     socket.on("LOCATION_DATA", data => {
-      if (data.latitude !== null) {
-        this.setLocationdata(data);
+      if (data.location) {
+        if (data.location.latitude !== null) {
+          this.props.setGps(data);
+        }
       }
     });
 
     socket.on("CAMERA_DATA_TO_FRONTEND", data => {
       if (data) {
         this.setState({
-          picArray: [...this.state.picArray, data]
+          imageArr: [...this.state.imageArr, data]
         });
       }
+    });
+  };
+
+  sendCollectInfo = (type, data) => {
+    socket.emit("COLLECT_DATA_STATE", {
+      type,
+      payload: { type, ...data }
     });
   };
 
@@ -137,35 +91,17 @@ class App extends Component {
               path={COLLECT_DATA_LINK}
               component={() => (
                 <CollectDataScreen
-                  location={this.state.locationData.location}
-                  data={this.state.graphData}
-                  time={this.state.time}
-                  setTime={this.setTime}
-                  startTimer={this.state.timer}
-                  collectData={this.collectData}
-                  buttonText={this.state.buttonText}
-                  collectDataCheck={this.state.collectdata}
-                  setDataCollector={this.setDataCollector}
-                  unsetCollector={this.unsetCollector}
-                  imageArr={this.state.picArray}
+                  sendCollectInfo={(type, data) =>
+                    this.sendCollectInfo(type, data)
+                  }
                 />
               )}
             />
             <Route
               path={GRAPH_VIEW_DATA_LINK}
-              component={() => (
-                <MainScreen
-                  location={this.state.locationData.location}
-                  data={this.state.graphData}
-                />
-              )}
+              component={() => <MainScreen />}
             />
           </Switch>
-          {/* <MainScreen
-              location={this.state.locationData.location}
-              data={this.state.graphData}
-            /> */}
-          {/* <MapScreen data={this.state.locationData.location} /> */}
           <Route path="" component={NavigationBar} />
         </div>
       </div>
@@ -173,4 +109,22 @@ class App extends Component {
   }
 }
 
-export default App;
+const mapDispatchToProps = {
+  graphMic: setGraphDataMic,
+  graphMq2: setGraphDataMq2,
+  graphMq135: setGraphDataMq135,
+  graphSoil: setGraphDataSoil,
+  setGps: setGpsData,
+  setHumidity: setHumidityData,
+  setMic: setMicData,
+  setMq2: setMq2Data,
+  setMq135: setMq135Data,
+  setSoil: setSoilData
+};
+
+export default withRouter(
+  connect(
+    null,
+    mapDispatchToProps
+  )(App)
+);

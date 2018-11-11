@@ -1,9 +1,10 @@
 import React, { Component } from "react";
 import CustomLineGraph from "../components/CustomLineGraph";
 import CustomGradientLineGraph from "../components/CustomGradientLineGraph";
-import PositionMap from "../components/PositionMap";
+import { withRouter } from "react-router-dom";
+import { connect } from "react-redux";
 
-export default class MainScreen extends Component {
+class MainScreen extends Component {
   compileData = [
     {
       id: 0,
@@ -167,3 +168,11 @@ export default class MainScreen extends Component {
     );
   }
 }
+
+const mapStateToProps = state => {
+  return {
+    data: [...state.graph.mq2]
+  };
+};
+
+export default withRouter(connect(mapStateToProps)(MainScreen));

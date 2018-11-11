@@ -6,7 +6,7 @@
     "@babel/polyfill": "^7.0.0",
     "firmata": "^0.19.1",
     "johnny-five": "^1.0.0",
-    "recharts": "^1.2.0",
+    "mongoose": "^5.3.11",
     "serialport": "^6.0.4",
     "socket-io": "^1.0.0",
     "socket.io": "^2.1.1",

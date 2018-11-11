@@ -1,0 +1,22 @@
+export const SET_GPS_DATA = "SET_GPS_DATA";
+export const SET_MIC_DATA = "SET_MIC_DATA";
+export const SET_HUMIDITY_DATA = "SET_HUMIDITY_DATA";
+export const SET_MQ2_DATA = "SET_MQ2_DATA";
+export const SET_MQ135_DATA = "SET_MQ135_DATA";
+export const SET_SOIL_DATA = "SET_SOIL_DATA";
+
+export const START_TIMER = "START_TIMER";
+export const STOP_TIMER = "STOP_TIMER";
+
+export const ADD_IMAGE = "ADD_IMAGE";
+export const REMOVE_IMAGE = "REMOVE_IMAGE";
+
+export const SET_COLLECT_TYPE = "SET_COLLECT_TYPE";
+export const SEND_COLLECT_DATA = "SEND_COLLECT_DATA";
+
+export const SET_GRAPH_DATA_MQ2 = "SET_GRAPH_DATA_MQ2";
+export const SET_GRAPH_DATA_MQ135 = "SET_GRAPH_DATA_MQ135";
+export const SET_GRAPH_DATA_MIC = "SET_GRAPH_DATA_MIC";
+export const SET_GRAPH_DATA_SOIL = "SET_GRAPH_DATA_SOIL";
+
+export const COLLECT_STATE_CHANGE = "COLLECT_STATE_CHANGE";

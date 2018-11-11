@@ -4,8 +4,19 @@ let socketList = []
 let monitorList=[]
 let cameraList = []
 
+const initDataCollection = {
+  smoke: false,
+  sound: false,
+  soil: false
+}
+
 class Connection{
+  static isCollectData =false;
   static imageData = null;
+  static stopCollecting = false;
+  static dataCollectionType = initDataCollection;
+
+  static picArray = []
 
   static initServer = () => {
     io.on('connection', (client) => {
@@ -23,23 +34,27 @@ class Connection{
       })
 
       client.on("UPLOAD_PIC", (data)=>{
-
+        console.log("Picture uploaded");
+        Connection.picArray.push(data);
         Connection.sendDataToClient({
           type: "CAMERA_DATA_TO_FRONTEND",
           payload: data
         })
       })
 
-      client.on("START_COLLECTING_DATA",() => {
-
-      })
-
-      client.on("STOP_COLLECTING_DATA", ()=>{
-
-      })
-
-      client.on("SAVE_COLLECTED_DATA",()=>{
-
+      client.on("COLLECT_DATA_STATE", data => {
+        if(data.type === "start"){
+          Connection.isCollectData = true;
+          Connection.dataCollectionType = {
+            soil: data.payload.soil, 
+            smoke: data.payload.smoke, 
+            sound: data.payload.sound
+          }
+        }else{
+          console.log("stop sequence");
+          Connection.stopCollecting = true;
+          Connection.isCollectData = false;
+        }
       })
 
       client.on("disconnect", ()=> {

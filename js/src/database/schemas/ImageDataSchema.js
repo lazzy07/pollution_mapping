@@ -1,12 +1,13 @@
-import {IMAGE_DATA_DATABSE_BASE64} from "../../constants";
-import mongoose from "mongoose";
+var IMAGE_DATA_DATABSE_BASE64 = require("../../constants").IMAGE_DATA_DATABSE_BASE64;
+var mongoose =  require("mongoose");
 
-const imageDataSchema = mongoose.Schema(IMAGE_DATA_DATABSE_BASE64, {
+var imageDataSchema = new mongoose.Schema({
   id: String,
   time: { type: Date, default: Date.now },
-  position: Object,
-  imagedata: Object,
+  imagedata: [],
   jpegPath: String
 })
 
-export default imageDataBase64DB = new imageDataSchema();
+var imageDB = mongoose.model(IMAGE_DATA_DATABSE_BASE64, imageDataSchema);
+
+module.exports = imageDB;

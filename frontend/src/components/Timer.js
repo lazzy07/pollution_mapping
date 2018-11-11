@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import { withRouter } from "react-router-dom";
+import { connect } from "react-redux";
 
 export class Timer extends Component {
   constructor(props) {
@@ -9,32 +11,40 @@ export class Timer extends Component {
     this.timer = null;
   }
 
-  upCount = () => {
-    if (this.props.start) {
+  componentWillMount = () => {
+    if (this.props.timerStart !== 0) {
       this.setState({
-        time: this.state.time + 1
+        // eslint-disable-next-line radix
+        time: parseInt((Date.now() - this.props.timerStart) / 1000)
       });
-      this.props.setTime(this.state.time);
     }
   };
 
-  componentWillMount() {
-    this.setState({
-      time: this.props.time
-    });
-  }
-
-  componentDidMount() {
-    this.timer = setInterval(this.upCount, 1000);
-  }
-
-  componentWillUnmount() {
-    if (this.timer) {
+  componentWillUnmount = () => {
+    if (this.timer !== null) {
       clearInterval(this.timer);
+      this.timer = null;
     }
-  }
+  };
 
   render() {
+    if (this.props.timerStart !== 0) {
+      if (this.timer == null) {
+        this.timer = setInterval(() => {
+          this.setState({
+            time: this.state.time + 1
+          });
+        }, 1000);
+      }
+    } else {
+      if (this.timer != null) {
+        this.setState({
+          time: 0
+        });
+        clearInterval(this.timer);
+        this.timer = null;
+      }
+    }
     return (
       <div
         style={{
@@ -44,9 +54,23 @@ export class Timer extends Component {
       >
         <p>
           Running for &nbsp;
-          <span style={{ fontSize: "20px" }}>{this.props.time}</span>s
+          <span style={{ fontSize: "20px" }}>{this.state.time}</span>s
         </p>
       </div>
     );
   }
 }
+
+const mapStateToProps = state => {
+  return {
+    timerStart: state.collect.timerStart,
+    timerStop: state.collect.timerStop
+  };
+};
+
+export default withRouter(
+  connect(
+    mapStateToProps,
+    null
+  )(Timer)
+);

@@ -1,10 +1,20 @@
 import React, { Component } from "react";
-//import PositionMap from "../components/PositionMap";
+import { withRouter } from "react-router-dom";
+import { connect } from "react-redux";
+
+import PositionMap from "../components/PositionMap";
 import { Button } from "../components/Button";
-import { Timer } from "../components/Timer";
+import Timer from "../components/Timer";
 import { Checkbox } from "../components/Checkbox";
 
-export default class CollectDataScreen extends Component {
+import {
+  startTimer,
+  stopTimer,
+  setCollectType,
+  collectStateChange
+} from "../redux/actions/CollectDataActions";
+
+class CollectDataScreen extends Component {
   changeCollectState = collect => {
     if (this.props.collectDataCheck[collect]) {
       this.props.unsetCollector(collect);
@@ -13,159 +23,212 @@ export default class CollectDataScreen extends Component {
     }
   };
 
-  setImageData = () => {
-    if (this.props.imageArr.length > 0) {
-      return (
-        <img
-          alt=""
-          src={"data:image/jpeg;base64," + this.props.imageArr[0].base64}
-        />
-      );
+  collectData = () => {
+    if (this.props.buttonText === "Collect") {
+      this.props.collectStateChange();
+      this.props.startTimer();
+      this.props.sendCollectInfo("start", {
+        ...this.props.collectData
+      });
+    } else {
+      this.props.collectStateChange();
+      this.props.stopTimer();
+      this.props.sendCollectInfo("stop", null);
     }
   };
 
+  setDataCollector = data => {
+    this.props.setCollectType({
+      [data]: true
+    });
+  };
+
   render() {
-    return (
-      <div style={{ color: "#00fcdb" }}>
+    if (this.props.gps.location) {
+      return (
+        <div style={{ color: "#00fcdb" }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-around",
+              padding: "10px"
+            }}
+          >
+            <div
+              style={{
+                padding: "20px",
+                boxShadow:
+                  "0 0px 5px rgba(0, 252, 219, 0.2), 0 0 40px rgba(0, 252, 219, 0.1) inset"
+              }}
+            >
+              <h4 style={{ textShadow: "2px 2px 5px rgba(0, 252, 219, 0.4)" }}>
+                GPS Data
+              </h4>
+              <p>
+                Latitude : {this.props.gps.location.latitude}
+                <br />
+                Longitude: {this.props.gps.location.longitude}
+              </p>
+            </div>
+            <div
+              style={{
+                padding: "20px",
+                boxShadow:
+                  "0 0px 5px rgba(0, 252, 219, 0.2), 0 0 40px rgba(0, 252, 219, 0.1) inset"
+              }}
+            >
+              <h4 style={{ textShadow: "2px 2px 5px rgba(0, 252, 219, 0.4)" }}>
+                MQ2 Sensor
+              </h4>
+              <p>Reading: {this.props.mq2.mq2sensor}</p>
+            </div>
+            <div
+              style={{
+                padding: "20px",
+                boxShadow:
+                  "0 0px 5px rgba(0, 252, 219, 0.2), 0 0 40px rgba(0, 252, 219, 0.1) inset"
+              }}
+            >
+              <h4 style={{ textShadow: "2px 2px 5px rgba(0, 252, 219, 0.4)" }}>
+                MQ135 Sensor
+              </h4>
+              <p>Reading: {this.props.mq135.mq135sensor}</p>
+            </div>
+            <div
+              style={{
+                padding: "20px",
+                boxShadow:
+                  "0 0px 5px rgba(0, 252, 219, 0.2), 0 0 40px rgba(0, 252, 219, 0.1) inset"
+              }}
+            >
+              <h4 style={{ textShadow: "2px 2px 5px rgba(0, 252, 219, 0.4)" }}>
+                Humidity Sensor
+              </h4>
+              <p>
+                Humidity: {this.props.humidity.humidity.relativeHumidity}
+                <br />
+                Temp: {this.props.humidity.temperature.celsius}
+              </p>
+            </div>
+            <div
+              style={{
+                padding: "20px",
+                boxShadow:
+                  "0 0px 5px rgba(0, 252, 219, 0.2), 0 0 40px rgba(0, 252, 219, 0.1) inset"
+              }}
+            >
+              <h4 style={{ textShadow: "2px 2px 5px rgba(0, 252, 219, 0.4)" }}>
+                Sound Level
+              </h4>
+              <p>Mic: {this.props.mic.value}</p>
+            </div>
+          </div>
+          <div className="row">
+            <div
+              className="col-12 col-md-6"
+              style={{
+                padding: "20px",
+                margin: "10px",
+                boxShadow:
+                  "0 0px 5px rgba(0, 252, 219, 0.2), 0 0 40px rgba(0, 252, 219, 0.1) inset"
+              }}
+            >
+              <p style={{ textShadow: "2px 2px 5px rgba(0, 252, 219, 0.4)" }}>
+                You Are Here:
+              </p>
+              <div
+                className="col-12"
+                style={{
+                  height: "47vh",
+                  marginTop: "20px",
+                  marginBottom: "20px"
+                }}
+              >
+                <PositionMap location={this.props.gps.location} />
+              </div>
+            </div>
+            <div style={{ padding: "20px" }} className="col-12 col-md-4">
+              <div
+                style={{
+                  boxShadow:
+                    "0 0px 5px rgba(0, 252, 219, 0.2), 0 0 40px rgba(0, 252, 219, 0.1) inset",
+                  padding: "10px",
+                  margin: "10px"
+                }}
+              >
+                <p>Collect Data : </p>
+                <Checkbox
+                  checked={this.props.collect.smoke}
+                  onClick={() => this.setDataCollector("smoke")}
+                  label="Smoke Data"
+                />
+                <Checkbox
+                  checked={this.props.collect.sound}
+                  onClick={() => this.setDataCollector("sound")}
+                  label="Sound Level Data"
+                />
+                <Checkbox
+                  checked={this.props.collect.soil}
+                  onClick={() => this.setDataCollector("soil")}
+                  label="Soil Moisture Data"
+                />
+                <Timer />
+                <Button
+                  onClick={this.collectData}
+                  text={this.props.buttonText}
+                />
+              </div>
+              <div className="col-12" />
+            </div>
+          </div>
+        </div>
+      );
+    } else {
+      return (
         <div
           style={{
+            textShadow: "2px 2px 5px rgba(0, 252, 219, 0.4)",
             display: "flex",
-            justifyContent: "space-around",
-            padding: "10px"
+            height: "100vh",
+            color: "#00fcdb",
+            textAlign: "center",
+            textJustify: "center",
+            justifyContent: "center",
+            alignItems: "center"
           }}
         >
-          <div
-            style={{
-              padding: "20px",
-              boxShadow:
-                "0 0px 5px rgba(0, 252, 219, 0.2), 0 0 40px rgba(0, 252, 219, 0.1) inset"
-            }}
-          >
-            <h4 style={{ textShadow: "2px 2px 5px rgba(0, 252, 219, 0.4)" }}>
-              GPS Data
-            </h4>
-            {/* <p>
-              Latitude : {this.props.location.latitude}
-              <br />
-              Longitude: {this.props.location.longitude}
-            </p> */}
-          </div>
-          <div
-            style={{
-              padding: "20px",
-              boxShadow:
-                "0 0px 5px rgba(0, 252, 219, 0.2), 0 0 40px rgba(0, 252, 219, 0.1) inset"
-            }}
-          >
-            <h4 style={{ textShadow: "2px 2px 5px rgba(0, 252, 219, 0.4)" }}>
-              MQ2 Sensor
-            </h4>
-            <p>Reading: {this.props.data.mq2}</p>
-          </div>
-          <div
-            style={{
-              padding: "20px",
-              boxShadow:
-                "0 0px 5px rgba(0, 252, 219, 0.2), 0 0 40px rgba(0, 252, 219, 0.1) inset"
-            }}
-          >
-            <h4 style={{ textShadow: "2px 2px 5px rgba(0, 252, 219, 0.4)" }}>
-              MQ135 Sensor
-            </h4>
-            <p>Reading: {this.props.data.mq135}</p>
-          </div>
-          <div
-            style={{
-              padding: "20px",
-              boxShadow:
-                "0 0px 5px rgba(0, 252, 219, 0.2), 0 0 40px rgba(0, 252, 219, 0.1) inset"
-            }}
-          >
-            <h4 style={{ textShadow: "2px 2px 5px rgba(0, 252, 219, 0.4)" }}>
-              Humidity Sensor
-            </h4>
-            <p>
-              Humidity: {this.props.data.humidity}
-              <br />
-              Temp: {this.props.data.temperature}
-            </p>
-          </div>
-          <div
-            style={{
-              padding: "20px",
-              boxShadow:
-                "0 0px 5px rgba(0, 252, 219, 0.2), 0 0 40px rgba(0, 252, 219, 0.1) inset"
-            }}
-          >
-            <h4 style={{ textShadow: "2px 2px 5px rgba(0, 252, 219, 0.4)" }}>
-              Sound Level
-            </h4>
-            <p>Mic: {this.props.data.mic}</p>
-          </div>
+          <div>GPS Data not recieving</div>
         </div>
-        <div>{this.setImageData()}</div>
-        <div className="row">
-          <div
-            className="col-12 col-md-6"
-            style={{
-              padding: "20px",
-              margin: "10px",
-              boxShadow:
-                "0 0px 5px rgba(0, 252, 219, 0.2), 0 0 40px rgba(0, 252, 219, 0.1) inset"
-            }}
-          >
-            <p style={{ textShadow: "2px 2px 5px rgba(0, 252, 219, 0.4)" }}>
-              You Are Here:
-            </p>
-            <div
-              className="col-12"
-              style={{
-                height: "47vh",
-                marginTop: "20px",
-                marginBottom: "20px"
-              }}
-            >
-              {/* <PositionMap location={this.props.location} /> */}
-            </div>
-          </div>
-          <div style={{ padding: "20px" }} className="col-12 col-md-4">
-            <div
-              style={{
-                boxShadow:
-                  "0 0px 5px rgba(0, 252, 219, 0.2), 0 0 40px rgba(0, 252, 219, 0.1) inset",
-                padding: "10px",
-                margin: "10px"
-              }}
-            >
-              <p>Collect Data : </p>
-              <Checkbox
-                checked={this.props.collectDataCheck.smoke}
-                onClick={() => this.changeCollectState("smoke")}
-                label="Smoke Data"
-              />
-              <Checkbox
-                checked={this.props.collectDataCheck.sound}
-                onClick={() => this.changeCollectState("sound")}
-                label="Sound Level Data"
-              />
-              <Checkbox
-                checked={this.props.collectDataCheck.soil}
-                onClick={() => this.changeCollectState("soil")}
-                label="Soil Moisture Data"
-              />
-              <Timer
-                time={this.props.time}
-                setTime={this.props.setTime}
-                start={this.props.startTimer}
-              />
-              <Button
-                onClick={this.props.collectData}
-                text={this.props.buttonText}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+      );
+    }
   }
 }
+
+const mapDispatchToProps = {
+  startTimer,
+  stopTimer,
+  setCollectType,
+  collectStateChange
+};
+
+const mapStateToProps = state => {
+  return {
+    mq2: state.mq2,
+    mq135: state.mq135,
+    mic: state.mic,
+    gps: state.gps,
+    humidity: state.humidity,
+    soil: state.soil,
+    collect: state.collect,
+    images: state.images,
+    buttonText: state.collect.collectType,
+    collectData: state.collect.collectData
+  };
+};
+
+export default withRouter(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(CollectDataScreen)
+);

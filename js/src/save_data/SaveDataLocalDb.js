@@ -1,16 +1,17 @@
-import uuidv3 from "uuid/v3"
+import uuidv4 from "uuid/v4"
 import DatabaseConnection from "../database/Database"
 
 class SaveDataLocalDb {
   static saveData = (data) => {
-    switch(data.payload){
+    switch(data.type){
       case "COLLECT_DATA":
-        const id = uuidv3();
+        const id = uuidv4();
+        console.log("Collected Data Save..");
         const saveSensorData = {
           type: "SENSOR_DATA",
           payload: {
             id,
-            ...data.payload
+            ...data.payload.sensor
           }
         }
 
@@ -18,13 +19,11 @@ class SaveDataLocalDb {
           type: "IMAGE_DATA_BASE64",
           payload: {
             id,
-            ...data.payload
+            imagedata: data.payload.image
           }
         }
-
-        if(DatabaseConnection.saveData(saveSensorData)){
-          DatabaseConnection.saveData(saveImageData);
-        }
+        DatabaseConnection.saveData(saveSensorData)
+        DatabaseConnection.saveData(saveImageData);
         break;
     }
   }

@@ -1,8 +1,7 @@
-import {SENSOR_DATA_DATABASE} from "../../constants";
-import mongoose from "mongoose";
+var SENSOR_DATA_DATABASE =  require("../../constants").SENSOR_DATA_DATABASE;
+var mongoose = require('mongoose');
 
-
-sensorDataSchema = mongoose.Schema({
+var sensorDataSchema = new mongoose.Schema({
   id: String,
   time: { type: Date, default: Date.now },
   position: Object,
@@ -10,6 +9,6 @@ sensorDataSchema = mongoose.Schema({
   sensorData: Object
 })
 
-sensorDataDB = mongoose.model(SENSOR_DATA_DATABASE, sensorDataSchema)
+var sensorDB = mongoose.model(SENSOR_DATA_DATABASE, sensorDataSchema);
 
-export default sensorDataDB;
+module.exports = sensorDB

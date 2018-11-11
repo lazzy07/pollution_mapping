@@ -4,6 +4,7 @@ export default class Dht11{
   constructor(board){
     this.board = board;
     this.multi = null;
+    this.val = null;
   }
 
   init = () => {
@@ -13,19 +14,24 @@ export default class Dht11{
   }
 
   start = () => {
+    // console.log(this.multi);
     if(this.multi){
-      multi.on("change", () => {
-        return {
+      this.multi.on("change", () => {
+        this.val =  {
           temperature: {
-            celsius: multi.temperature.celsius,
-            fahrenheit: multi.temperature.fahrenheit,
-            kelvin: multi.temperature.kelvin
+            celsius: this.multi.thermometer.celsius,
+            fahrenheit: this.multi.thermometer.fahrenheit,
+            kelvin: this.multi.thermometer.kelvin
           },
           humidity: {
-            relativeHumidity: multi.hygrometer.relativeHumidity
+            relativeHumidity: this.multi.hygrometer.relativeHumidity
           }
         }
       });
     }
+  }
+
+  getVal = () => {
+    return this.val;
   }
 } 

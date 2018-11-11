@@ -23,7 +23,7 @@ const gasData = {
   smoke: jsonToArray(smokeData.default)
 }
 
-class SmokeSensor{
+class Mq2Sensor{
   constructor(board, pin){
     this.pin = pin;
     this.board = board;
@@ -102,4 +102,4 @@ class SmokeSensor{
   }
 }
 
-export default SmokeSensor;
+export default Mq2Sensor;

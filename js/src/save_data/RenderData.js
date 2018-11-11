@@ -27,7 +27,7 @@ export default class RenderData{
   }
 
   static getAvg = (key,avgData, data) => {
-    return (avgData[key] + data[key])/this.iterations;
+    return (avgData[key] + data[key]);
   }
 
   static startCollectingData = () => {

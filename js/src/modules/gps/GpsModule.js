@@ -1,11 +1,11 @@
 import five from "johnny-five";
 
 export default class GpsModule {
-    constructor(board){
+    constructor(board, rx=11, tx=10){
         this.board = board;
         this.gps = null;
-        this.rx = 11;
-        this.tx = 10;
+        this.rx = rx;
+        this.tx = tx;
         this.location = null;
         this.nav = null;
         this.sentence = "";

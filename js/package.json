@@ -4,6 +4,7 @@
   "description": "Pollution detection using smoke sensors and sound sensors",
   "dependencies": {
     "@babel/polyfill": "^7.0.0",
+    "firebase": "^5.5.8",
     "firmata": "^0.19.1",
     "johnny-five": "^1.0.0",
     "mongoose": "^5.3.11",

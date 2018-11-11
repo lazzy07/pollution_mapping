@@ -17,6 +17,5 @@ export const rootReducer = combineReducers({
   gps: gpsReducer,
   humidity: humidityReducer,
   soil: soilReducer,
-  collect: collectReducer,
-  images: imageReducer
+  collect: collectReducer
 });

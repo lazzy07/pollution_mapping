@@ -8,8 +8,7 @@ const micReducer = (state = initialState, action) => {
   switch (action.type) {
     case SET_MIC_DATA:
       return {
-        ...state,
-        ...action.payload
+        value: action.payload
       };
 
     default:

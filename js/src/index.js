@@ -9,6 +9,7 @@ import Dht11 from './modules/dht11_sensor/Dht11';
 import CollectData from "./database/save_data/CollectData";
 import DatabaseConnection from './database/Database';
 import SaveDataLocalDb from "./save_data/SaveDataLocalDb";
+import {sendSensorData, sendImageData} from "./firebase_connection/ExportData";
 
 
 class MainClass{
@@ -16,6 +17,10 @@ class MainClass{
     Connection.initServer();
     DatabaseConnection.initDatabase();
     const unoBoard = new ArduinoBoard("COM3", 9600);
+
+    // sendSensorData();
+    // sendImageData();
+
     try{
       let board = await unoBoard.connectBoard();
 

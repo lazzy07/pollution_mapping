@@ -1,1 +1,1 @@
-export const CONNECTION_URL = "http://192.168.1.101:8000";
+export const CONNECTION_URL = "http://192.168.43.197:8000";

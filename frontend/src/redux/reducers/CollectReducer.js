@@ -2,7 +2,10 @@ import {
   START_TIMER,
   STOP_TIMER,
   SET_COLLECT_TYPE,
-  COLLECT_STATE_CHANGE
+  COLLECT_STATE_CHANGE,
+  ADD_IMAGE,
+  REMOVE_IMAGE,
+  REMOVE_IMAGE_ARRAY
 } from "../actions/types";
 
 const initialState = {
@@ -13,6 +16,7 @@ const initialState = {
     smoke: false,
     sound: false
   },
+  imageArray: [],
   collectType: "Collect"
 };
 
@@ -53,6 +57,23 @@ const collectReducer = (state = initialState, action) => {
           collectType: "Collect"
         };
       }
+
+    case ADD_IMAGE:
+      let arr = state.imageArray;
+      arr.push(action.payload);
+      return {
+        ...state,
+        imageArray: [...arr]
+      };
+
+    case REMOVE_IMAGE:
+      break;
+
+    case REMOVE_IMAGE_ARRAY:
+      return {
+        ...state,
+        imageArray: []
+      };
 
     default:
       return {

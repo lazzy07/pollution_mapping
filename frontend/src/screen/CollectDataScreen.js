@@ -11,7 +11,8 @@ import {
   startTimer,
   stopTimer,
   setCollectType,
-  collectStateChange
+  collectStateChange,
+  removeImageArray
 } from "../redux/actions/CollectDataActions";
 
 class CollectDataScreen extends Component {
@@ -34,12 +35,27 @@ class CollectDataScreen extends Component {
       this.props.collectStateChange();
       this.props.stopTimer();
       this.props.sendCollectInfo("stop", null);
+      this.props.removeImageArray();
     }
   };
 
   setDataCollector = data => {
     this.props.setCollectType({
       [data]: true
+    });
+  };
+
+  mapToImages = imageArr => {
+    return imageArr.map((img, index) => {
+      return (
+        <img
+          key={index}
+          src={"data:image/jpeg;base64, " + img.base64}
+          width="100%"
+          alt=""
+          style={{ transform: "rotate(90deg)" }}
+        />
+      );
     });
   };
 
@@ -178,7 +194,9 @@ class CollectDataScreen extends Component {
                   text={this.props.buttonText}
                 />
               </div>
-              <div className="col-12" />
+              <div className="col-12">
+                {this.mapToImages(this.props.images)}
+              </div>
             </div>
           </div>
         </div>
@@ -208,7 +226,8 @@ const mapDispatchToProps = {
   startTimer,
   stopTimer,
   setCollectType,
-  collectStateChange
+  collectStateChange,
+  removeImageArray
 };
 
 const mapStateToProps = state => {
@@ -220,7 +239,7 @@ const mapStateToProps = state => {
     humidity: state.humidity,
     soil: state.soil,
     collect: state.collect,
-    images: state.images,
+    images: state.collect.imageArray,
     buttonText: state.collect.collectType,
     collectData: state.collect.collectData
   };

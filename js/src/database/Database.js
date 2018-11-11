@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { resolve } from "dns";
 
 let sensorDataDB = require("./schemas/SensorDataSchema");
 let imageDataBase64DB = require("./schemas/ImageDataSchema");
@@ -43,6 +44,28 @@ class DatabaseConnection{
         })
         break;
     }
+  }
+
+  static getSensorData = () => {
+    return new Promise((resolve, reject) => {
+      sensorDataDB.find({}).then(data => {
+        resolve(data);
+      }).catch(e => {
+        console.log(e.message);
+        reject(e.message);
+      })
+    })
+  }
+
+  static getImageData = () => {
+    return new Promise((resolve, reject) => {
+      imageDataBase64DB.find({}).then(data => {
+        resolve(data);
+      }).catch(e => {
+        console.log(e.message);
+        reject(e.message);
+      })
+    })
   }
 }
 

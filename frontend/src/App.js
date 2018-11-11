@@ -23,17 +23,11 @@ import {
   setGraphDataMq135,
   setGraphDataSoil
 } from "./redux/actions/GraphDataActions";
+import { addImage } from "./redux/actions/CollectDataActions";
 
 const socket = openSocket(CONNECTION_URL);
 
 class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      imageArr: []
-    };
-  }
-
   componentWillMount() {
     socket.emit("ADD_MONITOR");
   }
@@ -67,9 +61,7 @@ class App extends Component {
 
     socket.on("CAMERA_DATA_TO_FRONTEND", data => {
       if (data) {
-        this.setState({
-          imageArr: [...this.state.imageArr, data]
-        });
+        this.props.addImage(data);
       }
     });
   };
@@ -119,7 +111,8 @@ const mapDispatchToProps = {
   setMic: setMicData,
   setMq2: setMq2Data,
   setMq135: setMq135Data,
-  setSoil: setSoilData
+  setSoil: setSoilData,
+  addImage: addImage
 };
 
 export default withRouter(
